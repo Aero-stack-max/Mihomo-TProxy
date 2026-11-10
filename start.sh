@@ -40,6 +40,7 @@ fi
 # 5. Apply NAT Interception Chains
 # --- TCP Transparent Proxy ---
 iptables -t nat -N MIHOMO 2>/dev/null || iptables -t nat -F MIHOMO
+iptables -t nat -A MIHOMO -o tun+ -j RETURN
 iptables -t nat -A MIHOMO -m mark --mark 0x200000/0x200000 -j RETURN
 iptables -t nat -A MIHOMO -d 0.0.0.0/8 -j RETURN
 iptables -t nat -A MIHOMO -d 10.0.0.0/8 -j RETURN
@@ -58,6 +59,7 @@ iptables -t nat -I OUTPUT 1 -j MIHOMO
 
 # --- DNS Interception (UDP/TCP 53 -> 1053) ---
 iptables -t nat -N MIHOMO_DNS 2>/dev/null || iptables -t nat -F MIHOMO_DNS
+iptables -t nat -A MIHOMO_DNS -o tun+ -j RETURN
 iptables -t nat -A MIHOMO_DNS -m mark --mark 0x200000/0x200000 -j RETURN
 iptables -t nat -A MIHOMO_DNS -p udp --dport 53 -j REDIRECT --to-ports 1053
 iptables -t nat -A MIHOMO_DNS -p tcp --dport 53 -j REDIRECT --to-ports 1053
