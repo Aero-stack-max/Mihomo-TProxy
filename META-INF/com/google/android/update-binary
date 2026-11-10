@@ -1,0 +1,21 @@
+#!/sbin/sh
+#################
+# Magisk Module Installer Script
+#################
+
+umask 022
+OUTFD=$2
+ZIPFILE=$3
+
+# Extract util_functions.sh
+unzip -o "$ZIPFILE" 'util_functions.sh' -d "$TMPDIR" >&2
+[ -f "$TMPDIR/util_functions.sh" ] || {
+  [ -f /data/adb/magisk/util_functions.sh ] && cp -af /data/adb/magisk/util_functions.sh "$TMPDIR/util_functions.sh"
+  [ -f /data/adb/ksu/bin/util_functions.sh ] && cp -af /data/adb/ksu/bin/util_functions.sh "$TMPDIR/util_functions.sh"
+  [ -f /data/adb/ap/bin/util_functions.sh ] && cp -af /data/adb/ap/bin/util_functions.sh "$TMPDIR/util_functions.sh"
+}
+
+. "$TMPDIR/util_functions.sh"
+
+install_module
+exit 0

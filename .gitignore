@@ -1,0 +1,9 @@
+*.log
+*.pid
+*.tmp
+*.b64
+sub.url
+proxy_providers/airport.yaml
+proxy_providers/airport.tmp
+cache.db
+.DS_Store

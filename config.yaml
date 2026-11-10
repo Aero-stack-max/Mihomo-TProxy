@@ -1,0 +1,115 @@
+redir-port: 7892
+mixed-port: 7891
+tproxy-port: 9898
+routing-mark: 2097152
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: silent
+tcp-concurrent: true
+unified-delay: true
+sniffer:
+    enable: true
+    force-dns-mapping: true
+    parse-pure-ip: true
+    sniff:
+        TLS:
+            ports: [443, 8443]
+        HTTP:
+            ports: [80, 8080-8880]
+            override-destination: true
+    skip-domain:
+        - 'Mijia Cloud'
+        - 'dlg.io.mi.com'
+        - '+.push.apple.com'
+external-controller: '0.0.0.0:9091'
+secret: ''
+external-ui: 'ui'
+dns:
+    enable: true
+    listen: 0.0.0.0:1053
+    ipv6: false
+    default-nameserver: [223.5.5.5, 119.29.29.29]
+    enhanced-mode: fake-ip
+    fake-ip-filter:
+        - '*.lan'
+        - '*.local'
+        - '*.localdomain'
+        - 'connectivitycheck.gstatic.com'
+        - 'connectivitycheck.android.com'
+        - 'clients3.google.com'
+        - 'msftconnecttest.com'
+        - '*.msftconnecttest.com'
+        - 'msftncsi.com'
+        - '*.msftncsi.com'
+        - 'connect.rom.miui.com'
+        - '*.connect.rom.miui.com'
+        - 'wifi.vivo.com.cn'
+        - 'captive.apple.com'
+        - '*.captive.apple.com'
+        - 'time.*.com'
+        - 'time.*.gov'
+        - 'time.*.edu.cn'
+        - 'time.*.apple.com'
+        - 'pool.ntp.org'
+        - '*.pool.ntp.org'
+        - 'ntp.*.com'
+        - '*.market.xiaomi.com'
+    fake-ip-range: 198.18.0.1/16
+    use-hosts: true
+    respect-rules: false
+    proxy-server-nameserver: [223.5.5.5, 119.29.29.29]
+    nameserver:
+        - https://doh.pub/dns-query
+        - https://dns.alidns.com/dns-query
+    fallback:
+        - https://1.1.1.1/dns-query
+        - https://8.8.8.8/dns-query
+    fallback-filter: { geoip: true, geoip-code: CN, geosite: [gfw], ipcidr: [240.0.0.0/4], domain: [+.google.com, +.facebook.com, +.youtube.com] }
+
+proxy-providers:
+  airport:
+    type: http
+    url: ""
+    path: ./proxy_providers/airport.yaml
+    interval: 86400
+    health-check:
+      enable: true
+      interval: 300
+      url: http://www.gstatic.com/generate_204
+
+proxy-groups:
+  - name: 节点选择
+    type: select
+    proxies:
+      - DIRECT
+      - 自动选择
+      - 故障转移
+    use:
+      - airport
+  - name: 自动选择
+    type: url-test
+    use:
+      - airport
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+  - name: 故障转移
+    type: fallback
+    use:
+      - airport
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+
+rules:
+  - 'IP-CIDR,1.1.1.1/32,节点选择,no-resolve'
+  - 'IP-CIDR,8.8.8.8/32,节点选择,no-resolve'
+  - 'DOMAIN-SUFFIX,services.googleapis.cn,节点选择'
+  - 'DOMAIN-SUFFIX,xn--ngstr-lra8j.com,节点选择'
+  - 'DOMAIN,safebrowsing.urlsec.qq.com,DIRECT'
+  - 'DOMAIN,safebrowsing.googleapis.com,DIRECT'
+  - 'DOMAIN,developer.apple.com,节点选择'
+  - 'DOMAIN-SUFFIX,digicert.com,节点选择'
+  - 'GEOSITE,category-ads-all,REJECT'
+  - 'GEOSITE,cn,DIRECT'
+  - 'GEOIP,cn,DIRECT'
+  - 'MATCH,节点选择'
