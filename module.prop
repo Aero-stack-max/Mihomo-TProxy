@@ -1,6 +1,6 @@
 id=mihomo_tproxy
 name=Mihomo 系统级透明代理 (通用版)
-version=v1.2
-versionCode=12
+version=v1.3
+versionCode=13
 author=Aero
-description=基于 Mihomo (Clash.Meta) 的内核级透明代理服务。免 VPN 钥匙，毫秒级直连，内核防 DNS 泄漏。免 WebUI X 支持，点击【操作】直接调起浏览器管理订阅。
+description=基于 Mihomo (Clash.Meta) 的内核级透明代理服务。免 VPN 钥匙，毫秒级直连，全链路防 DNS 泄漏。支持浏览器管理订阅及与 HttpCanary/Reqable 链式协同抓包。
